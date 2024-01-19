@@ -1,0 +1,35 @@
+DIGIT : "0".."9"
+ALPHA           : "A".."Z" | "a".."z" | "_"
+ALPHANUM        : ALPHA [ ALPHA | DIGIT ]*
+
+start: NL+ entry+
+
+entry: datetime "*" note? tags? NL account duration? NL?
+
+year : /[0-9]{4}/
+month : /0[1-9]|1[0-2]/
+day : /0[1-9]|[12][0-9]|3[0-1]/
+hour : /0[1-9]|1[0-9]|2[0-4]/
+minute : /[0-5][0-9]/
+second : /[0-5][0-9]/
+fractional   : /[0-9]+/
+datetime : year "-" month "-" day "T" hour ":" minute (":" second)? ("." fractional)?
+
+note : STRING
+tags : tag*
+tag : "#" ALPHANUM
+
+account: WORD subaccount*
+subaccount: ":" WORD
+
+duration: duration_hour ("H" | "h") duration_minute ("M" | "m")
+        | duration_hour ("H" | "h")
+        | duration_minute ("M" | "m")
+duration_hour : /[0-9]+/
+duration_minute : /[0-9]+/
+
+%import common.NEWLINE -> NL
+%import common.ESCAPED_STRING -> STRING
+%import common.WORD -> WORD
+%import common.WS_INLINE
+%ignore WS_INLINE
